@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <title>anchors-in-area</title>
+    <meta charset="utf-8" />
+    <link rel='stylesheet' href='./app.css' />
+  </head>
+  <body>
+    <h2>anchors-in-area</h2>
+    <div class="boxes">
+      <div class="box">
+        <a href='#'>home</a>
+        <a href='https://www.google.com'>Google</a>
+        <br><br>
+        <a href='#'>home</a>
+        <br>
+        <a href='https://github.com/' target='_blank'>GitHub</a>
+      </div>
+      <div class="box">
+        <b>pork-cutlet sandwich</b><br>
+        <a href='https://gyazo.com/157f5c042d631955a0b3786081b0c7c6'>
+          <img class='md' src='https://i.gyazo.com/157f5c042d631955a0b3786081b0c7c6.jpg'>
+        </a>
+      </div>
+      <div class="box">
+        200 x 200 px <br>
+        <ul>
+          <li>
+            <a href='http://twitter.com' target='_blank'>Twitter</a>
+          </li>
+          <li>
+            <a href="mailto:test@example.com">MAIL</a>
+          </li>
+        </ul>
+      </div>
+      <div class="box">4</div>
+      <div class="box">5</div>
+      <div class="box">6</div>
+      <div class="box">7</div>
+      <div class="box">8</div>
+    </div>
+
+    <div class='debug'>
+      <b>> Developer tool console</b>
+      <pre>
+        › var anchorsInArea = new AnchorsInArea()
+      </pre>
+      <div class='res'>
+        undefined
+      </div>
+      <pre>
+        › anchorsInArea
+      </pre>
+      <div class='res'>
+        <img src='https://i.gyazo.com/9080c6358e9151977c227f0e8050d7fe.png' style='height: 140px;'>
+      </div>
+      <pre>
+        › window.scrollTo(0, 0)
+        › anchorsInArea.find({ top: 10, left: 10, right: 300, bottom: 300 })
+      </pre>
+      <div class='res'>
+        <img src='https://i.gyazo.com/8b87edc8a5b88249277f3c9932289e47.png' style='height: 140px;'>
+      </div>
+      <br>
+      <pre>
+          › debug
+        </pre>
+      <div class='res'>
+        <img src='https://i.gyazo.com/6782ee378cf9450963df4c91543a1736.png' style='height: 140px;'>
+      </div>
+      <pre>
+        › debug.setRange({ top: 10, left: 10, right: 300, bottom: 300 })
+      </pre>
+      <div class='res'>
+        <img src='https://i.gyazo.com/a0b8298c63f61e639a9952e541278f16.png' style='height: 305px;'>
+      </div>
+      <pre>
+        › debug.setRange({ top: 50, left: 60, right: 300, bottom: 300 })
+      </pre>
+      <div class='res'>
+        <img src='https://i.gyazo.com/1476705433afbc6a5f0a28197660fb98.png' style='height: 300px;'>
+      </div>
+      <pre>
+        › debug.find()
+      </pre>
+      <div class='res'>
+        <img src='https://i.gyazo.com/29172fa483ee60dfb93c26a37f45494f.png' style='height: 200px;'>
+      </div>
+      <pre>
+        › debug.setRange({ top: 30, left: 160, right: 700, bottom: 300 })
+      </pre>
+      <div class='res'>
+        <img src='https://i.gyazo.com/f33dc3e7e36fe53d97eeba0261f3ec46.png' style='height: 80px;'>
+      </div>
+    </div>
+
+    <div id='wrapper'></div>
+
+    <script src='./bundle.js'></script>
+  </body>
+</html>
