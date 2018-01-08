@@ -1,19 +1,21 @@
 import $ from 'jquery'
 
 export default class AnchorsInArea {
-  constructor (node) {
+  constructor (node=window.document) {
     this.root = node
-    this.range = {}
-    this.visited = []
-    this.candidateAnchorNodes = []
-
     this.options = {
       excludeInvisibles: true,
       onlyInTopLayer: true,
       onlyHttpUrl: true,
-      maxDepth: 5
+      maxDepth: 20
     }
+    this.initialize()
+  }
 
+  initialize () {
+    this.range = {}
+    this.visited = []
+    this.candidateAnchorNodes = []
     this.anchors = []
   }
 
@@ -34,11 +36,16 @@ export default class AnchorsInArea {
       [anchor.position.right - 1, anchor.position.bottom - 1],
       [anchor.position.left + 1, anchor.position.bottom - 1]
     ]
+
+    const childNodes = anchorNode.childNodes
+    if (childNodes.length === 0) return false
+    const childNode = childNodes[0]
+
     for (let point of points) {
       const element = document.elementFromPoint(
         point[0] - window.pageXOffset, point[1] - window.pageYOffset)
-      if (element === anchorNode || $(element).find(anchorNode).length > 0 ||
-        $(anchorNode).find(element).length > 0) return true
+      if (element === childNode || $(element).find(childNode).length > 0 ||
+        $(childNode).find(element).length > 0) return true
     }
     return false
   }
@@ -62,12 +69,13 @@ export default class AnchorsInArea {
     this.visited.push(node)
 
     for (let childNode of node.childNodes) {
-      if (!this.visited(childNode)) this._dfs(childNode, depth + 1)
+      if (!this.visited.includes(childNode)) this._dfs(childNode, depth + 1)
     }
   }
 
   find ({ top, left, bottom, right }) {
     if (!top || !left || !bottom || !right) return []
+    this.initialize()
     this.range = { top, left, bottom, right }
     this._dfs(this.root, 0)
 
