@@ -39,8 +39,6 @@ var AnchorsInArea = function () {
     key: 'initialize',
     value: function initialize() {
       this.range = {};
-      this.visited = [];
-      this.candidateAnchorNodes = [];
       this.anchors = [];
     }
   }, {
@@ -97,52 +95,6 @@ var AnchorsInArea = function () {
       return false;
     }
   }, {
-    key: '_collect',
-    value: function _collect(node) {
-      if (!this.candidateAnchorNodes.includes(node)) this.candidateAnchorNodes.push(node);
-    }
-  }, {
-    key: '_dfs',
-    value: function _dfs(node, depth) {
-      // register anchor node
-      if (node.nodeName.toLowerCase() === 'a') {
-        var href = node.href;
-        if (this.options.onlyHttpUrl) {
-          if (href.startsWith('http')) this._collect(node);
-        } else {
-          this._collect(node);
-        }
-      }
-
-      if (depth > this.options.maxDepth) return;
-      this.visited.push(node);
-
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
-
-      try {
-        for (var _iterator2 = node.childNodes[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var childNode = _step2.value;
-
-          if (!this.visited.includes(childNode)) this._dfs(childNode, depth + 1);
-        }
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
-        }
-      }
-    }
-  }, {
     key: 'find',
     value: function find(_ref2) {
       var top = _ref2.top,
@@ -153,16 +105,18 @@ var AnchorsInArea = function () {
       if (!top || !left || !bottom || !right) return [];
       this.initialize();
       this.range = { top: top, left: left, bottom: bottom, right: right };
-      this._dfs(this.root, 0);
+      var candidateAnchorNodes = document.querySelectorAll('a');
 
-      var _iteratorNormalCompletion3 = true;
-      var _didIteratorError3 = false;
-      var _iteratorError3 = undefined;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
 
       try {
-        for (var _iterator3 = this.candidateAnchorNodes[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-          var anchorNode = _step3.value;
+        for (var _iterator2 = candidateAnchorNodes[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var anchorNode = _step2.value;
 
+          var href = anchorNode.href;
+          if (this.options.onlyHttpUrl && !href.startsWith('http')) continue;
           var rect = anchorNode.getBoundingClientRect();
           if (this.options.excludeInvisibles && rect.top === 0 && rect.bottom === 0 && rect.left === 0 && rect.right === 0) {
             continue;
@@ -183,16 +137,16 @@ var AnchorsInArea = function () {
           this.anchors.push(anchor);
         }
       } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-            _iterator3.return();
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
           }
         } finally {
-          if (_didIteratorError3) {
-            throw _iteratorError3;
+          if (_didIteratorError2) {
+            throw _iteratorError2;
           }
         }
       }
