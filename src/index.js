@@ -48,10 +48,14 @@ export default class AnchorsInArea {
     return false
   }
 
-  find ({ top, left, bottom, right }) {
+  find ({ top, left, bottom, right, width, height }) {
+    if (height) bottom = top + height
+    if (width) right = left + width
     if (!top || !left || !bottom || !right) return []
     this.initialize()
     this.range = { top, left, bottom, right }
+
+    // XXX: 候補をもう少し小さくできないか
     const candidateAnchorNodes = document.querySelectorAll('a')
 
     for (let anchorNode of candidateAnchorNodes) {

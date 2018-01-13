@@ -13,13 +13,13 @@ class SampleDebugger {
     this.range = {}
   }
 
-  setRange ({ top, left, bottom, right }) {
+  setRange ({ top, left, bottom, right, width, height }) {
     $wrapper.css({
       top, left,
-      width: right - left,
-      height: bottom - top
+      width: width || (right - left),
+      height: height || (bottom - top)
     })
-    this.range = { top, left, bottom, right }
+    this.range = { top, left, bottom, right, width, height }
     $wrapper.show()
   }
 
