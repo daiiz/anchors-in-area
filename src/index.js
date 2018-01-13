@@ -51,7 +51,8 @@ export default class AnchorsInArea {
   find ({ top, left, bottom, right, width, height }) {
     if (height) bottom = top + height
     if (width) right = left + width
-    if (!top || !left || !bottom || !right) return []
+    if (top === undefined || left === undefined
+      || bottom === undefined || right === undefined) return []
     this.initialize()
     this.range = { top, left, bottom, right }
 
