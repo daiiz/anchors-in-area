@@ -74,7 +74,9 @@ export default class AnchorsInArea {
           top: rect.top + window.scrollY,
           left: rect.left + window.scrollX,
           bottom: rect.bottom + window.scrollY,
-          right: rect.right + window.scrollX
+          right: rect.right + window.scrollX,
+          width: position.right - position.left,
+          height: position.bottom - position.top
         }
       }
 
