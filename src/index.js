@@ -37,7 +37,7 @@ export default class AnchorsInArea {
 
     const childNodes = anchorNode.childNodes
     if (childNodes.length === 0) return false
-    const childNode = childNodes[0]
+    const childNode = anchorNode //childNodes[0]
 
     for (let point of points) {
       const element = document.elementFromPoint(
