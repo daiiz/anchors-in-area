@@ -134,8 +134,8 @@ var AnchorsInArea = function () {
               left: rect.left + window.scrollX,
               bottom: rect.bottom + window.scrollY,
               right: rect.right + window.scrollX,
-              width: position.right - position.left,
-              height: position.bottom - position.top
+              width: rect.right - rect.left,
+              height: rect.bottom - rect.top
             }
           };
 
