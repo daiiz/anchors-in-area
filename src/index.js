@@ -54,6 +54,10 @@ export default class AnchorsInArea {
     if (top === undefined || left === undefined
       || bottom === undefined || right === undefined) return []
     this.initialize()
+    top += window.scrollY
+    bottom += window.scrollY
+    left += window.scrollX
+    right += window.scrollX
     this.range = { top, left, bottom, right }
 
     // XXX: 候補をもう少し小さくできないか

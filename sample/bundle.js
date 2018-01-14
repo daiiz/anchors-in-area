@@ -108,6 +108,10 @@ var AnchorsInArea = function () {
       if (width) right = left + width;
       if (top === undefined || left === undefined || bottom === undefined || right === undefined) return [];
       this.initialize();
+      top += window.scrollY;
+      bottom += window.scrollY;
+      left += window.scrollX;
+      right += window.scrollX;
       this.range = { top: top, left: left, bottom: bottom, right: right };
 
       var candidateAnchorNodes = document.querySelectorAll('a');
