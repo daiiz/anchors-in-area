@@ -7,6 +7,7 @@ export default class AnchorsInArea {
       excludeInvisibles: true,
       onlyInTopLayer: true,
       onlyHttpUrl: true,
+      detail: false,
       maxDepth: 20
     }
     this.initialize()
@@ -78,6 +79,9 @@ export default class AnchorsInArea {
           width: rect.right - rect.left,
           height: rect.bottom - rect.top
         }
+      }
+      if (this.options.detail) {
+        anchor.ref = anchorNode
       }
 
       if (!this._isInvolvedIn(anchor.position)) continue

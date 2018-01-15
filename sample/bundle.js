@@ -30,6 +30,7 @@ var AnchorsInArea = function () {
       excludeInvisibles: true,
       onlyInTopLayer: true,
       onlyHttpUrl: true,
+      detail: false,
       maxDepth: 20
     };
     this.initialize();
@@ -138,6 +139,9 @@ var AnchorsInArea = function () {
               height: rect.bottom - rect.top
             }
           };
+          if (this.options.detail) {
+            anchor.ref = anchorNode;
+          }
 
           if (!this._isInvolvedIn(anchor.position)) continue;
           if (this.options.onlyInTopLayer && !this._isTheTopLayer(anchor, anchorNode)) continue;
@@ -10450,6 +10454,7 @@ class SampleDebugger {
   find () {
     $wrapper.hide()
     const a = new AnchorsInArea(this.root)
+    a.options.detail = true
     const res = a.find(this.range)
     $wrapper.show()
     return res
