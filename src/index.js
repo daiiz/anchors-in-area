@@ -35,15 +35,11 @@ export default class AnchorsInArea {
       [anchor.position.left + 1, anchor.position.bottom - 1]
     ]
 
-    const childNodes = anchorNode.childNodes
-    if (childNodes.length === 0) return false
-    const childNode = anchorNode //childNodes[0]
-
     for (let point of points) {
       const element = document.elementFromPoint(
         point[0] - window.pageXOffset, point[1] - window.pageYOffset)
-      if (element === childNode || $(element).find(childNode).length > 0 ||
-        $(childNode).find(element).length > 0) return true
+      if (element === anchorNode || $(element).find(anchorNode).length > 0 ||
+        $(anchorNode).find(element).length > 0) return true
     }
     return false
   }
