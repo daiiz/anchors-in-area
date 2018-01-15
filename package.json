@@ -1,15 +1,18 @@
 {
   "name": "anchors-in-area",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel src/ --out-dir lib/"
+    "build": "./node_modules/.bin/babel src/ --out-dir lib/",
+    "build-sample": "./node_modules/.bin/browserify sample/app.js -o sample/bundle.js",
+    "build-all": "npm run build && npm run build-sample"
   },
   "author": "daiiz",
   "license": "MIT",
   "dependencies": {
+    "browserify": "^15.0.0",
     "jquery": "^3.2.1"
   },
   "devDependencies": {

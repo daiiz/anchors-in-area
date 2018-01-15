@@ -1,0 +1,57 @@
+.boxes {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+}
+
+.box {
+  width: 200px;
+  height: 200px;
+  margin: 0px;
+  padding: 10px;
+  border: 1px solid #eee;
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 10pt;
+}
+
+a {
+  color: cornflowerblue;
+  font-size: 10pt;
+}
+
+img.md {
+  width: 80px;
+  height: 80px;
+}
+
+.debug {
+  margin-top: 25px;
+  margin-bottom: 50px;
+}
+
+pre {
+  background-color: rgba(0,0,0,0.04);
+  margin: 10px;
+  padding-top: 16px;
+  border-radius: 2px;
+}
+
+.res {
+  padding-left: 15px;
+  margin-left: 15px;
+  margin-bottom: 20px;
+  border-left: 3px solid green;
+}
+
+#wrapper {
+  position: fixed;
+  background-color: rgba(0,0,0,0.05);
+  border: 1px solid #ccc;
+  cursor: pointer;
+  display: none;
+}
