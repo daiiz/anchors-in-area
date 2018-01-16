@@ -26,6 +26,7 @@ class SampleDebugger {
   find () {
     $wrapper.hide()
     const a = new AnchorsInArea(this.root)
+    a.options.detail = true
     const res = a.find(this.range)
     $wrapper.show()
     return res
