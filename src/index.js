@@ -45,16 +45,17 @@ export default class AnchorsInArea {
     return false
   }
 
-  find ({ top, left, bottom, right, width, height }) {
+  // pageTop, pageleft: scrollX, scrollYが加算された値
+  find ({ top, left, pageTop, pageLeft, bottom, right, width, height }) {
+    // ページの左上を原点とした座標系に変換する
+    top = (top === undefined) ? pageTop : (top + window.scrollY)
+    left = (left === undefined) ? pageLeft : (left + window.scrollX)
     if (height) bottom = top + height
     if (width) right = left + width
+
     if (top === undefined || left === undefined
       || bottom === undefined || right === undefined) return []
     this.initialize()
-    top += window.scrollY
-    bottom += window.scrollY
-    left += window.scrollX
-    right += window.scrollX
     this.range = { top, left, bottom, right }
 
     // XXX: 候補をもう少し小さくできないか
