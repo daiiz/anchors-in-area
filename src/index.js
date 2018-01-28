@@ -46,10 +46,14 @@ export default class AnchorsInArea {
   }
 
   // pageTop, pageleft: scrollX, scrollYが加算された値
-  find ({ top, left, pageTop, pageLeft, bottom, right, width, height }) {
+  find ({ top, left, bottom, right,
+    pageTop, pageLeft, pageBottom, pageRight, width, height }) {
     // ページの左上を原点とした座標系に変換する
     top = (top === undefined) ? pageTop : (top + window.scrollY)
     left = (left === undefined) ? pageLeft : (left + window.scrollX)
+    bottom = (bottom === undefined) ? pageBottom : (bottom + window.scrollY)
+    right = (right === undefined) ? pageRight : (right + window.scrollX)
+
     if (height) bottom = top + height
     if (width) right = left + width
 
