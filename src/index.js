@@ -111,6 +111,10 @@ export default class AnchorsInArea {
         text: anchorNode.innerText.trim(),
         url: anchorNode.href || '',
         position: {
+          left: rect.left,
+          top: rect.top,
+          right: rect.right,
+          bottom: rect.bottom,
           page: {
             left: rect.left + window.scrollX,
             top: rect.top + window.scrollY,
