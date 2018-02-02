@@ -4,11 +4,10 @@ export default class AnchorsInArea {
   constructor (node=window.document) {
     this.root = node
     this.options = {
+      detail: false,
       excludeInvisibles: true,
       onlyInTopLayer: true,
-      onlyHttpUrl: true,
-      detail: false,
-      maxDepth: 20
+      onlyHttpUrl: true
     }
     this.initialize()
   }
@@ -18,22 +17,22 @@ export default class AnchorsInArea {
     this.anchors = []
   }
 
-  _isInvolvedIn ({ top, left, bottom, right }) {
-    if (!top || !left || !bottom || !right) return false
-    var X = this.range.left
-    var Y = this.range.top
-    var Xw = this.range.right || this.range.left + this.range.width
-    var Yh = this.range.bottom || this.range.top + this.range.height
-    if (X <= left && right <= Xw && Y <= top && bottom <= Yh) return true
+  _isInvolvedIn ({ pageLeft, pageTop, pageRight, pageBottom }) {
+    if (!pageLeft || !pageTop || !pageRight || !pageBottom) return false
+    var X = this.range.pageLeft
+    var Y = this.range.pageTop
+    var Xw = this.range.pageRight || this.range.pageLeft + this.range.width
+    var Yh = this.range.pageBottom || this.range.pageTop + this.range.height
+    if (X <= pageLeft && pageRight <= Xw && Y <= pageTop && pageBottom <= Yh) return true
     return false
   }
 
   _isTheTopLayer (anchor, anchorNode) {
     const points = [
-      [anchor.position.left + 1, anchor.position.top + 1],
-      [anchor.position.right - 1, anchor.position.top + 1],
-      [anchor.position.right - 1, anchor.position.bottom - 1],
-      [anchor.position.left + 1, anchor.position.bottom - 1]
+      [anchor.position.pageLeft + 1, anchor.position.pageTop + 1],
+      [anchor.position.pageRight - 1, anchor.position.pageTop + 1],
+      [anchor.position.pageRight - 1, anchor.position.pageBottom - 1],
+      [anchor.position.pageLeft + 1, anchor.position.pageBottom - 1]
     ]
 
     for (let point of points) {
@@ -45,22 +44,53 @@ export default class AnchorsInArea {
     return false
   }
 
-  // pageTop, pageleft: scrollX, scrollYが加算された値
-  find ({ top, left, bottom, right,
+  // pageTop, pageLeft: scrollX, scrollYが加算された値
+  getStandardRange ({ top, left, bottom, right,
     pageTop, pageLeft, pageBottom, pageRight, width, height }) {
-    // ページの左上を原点とした座標系に変換する
-    top = (top === undefined) ? pageTop : (top + window.scrollY)
-    left = (left === undefined) ? pageLeft : (left + window.scrollX)
-    bottom = (bottom === undefined) ? pageBottom : (bottom + window.scrollY)
-    right = (right === undefined) ? pageRight : (right + window.scrollX)
+    // scroll量も加味された、ページの左上を原点とした座標系に変換する
+    pageTop = (top === undefined) ? pageTop : (top + window.scrollY)
+    pageLeft = (left === undefined) ? pageLeft : (left + window.scrollX)
+    pageBottom = (bottom === undefined) ? pageBottom : (bottom + window.scrollY)
+    pageRight = (right === undefined) ? pageRight : (right + window.scrollX)
 
-    if (height) bottom = top + height
-    if (width) right = left + width
+    if (height) {
+      pageBottom = pageTop + height
+    } else {
+      height = pageBottom - pageTop
+    }
 
-    if (top === undefined || left === undefined
-      || bottom === undefined || right === undefined) return []
+    if (width) {
+      pageRight = pageLeft + width
+    } else {
+      width = pageRight - pageLeft
+    }
+
+    return { pageLeft, pageTop, pageRight, pageBottom, width, height }
+  }
+
+  // width, heightに対する相対的な値(%)を返す
+  findRelative (range) {
+    const anchors = this.find(range)
+    const {pageLeft, pageTop, width, height} = this.getStandardRange(range)
+    for (const anchor of anchors) {
+      anchor.position = {
+        pageLeft: +(100 * (anchor.position.pageLeft - pageLeft) / width).toFixed(2),
+        pageTop: +(100 * (anchor.position.pageTop - pageTop) / height).toFixed(2),
+        width: +(100 * anchor.position.width / width).toFixed(2),
+        height: +(100 * anchor.position.height / height).toFixed(2)
+      }
+    }
+    return anchors
+  }
+
+  // ページの左上を原点として、scroll量も加味した値(px)を返す
+  find (range) {
+    const {pageLeft, pageTop, pageRight, pageBottom} = this.getStandardRange(range)
+
+    if (pageLeft === undefined || pageTop === undefined
+      || pageRight === undefined || pageBottom === undefined) return []
     this.initialize()
-    this.range = { top, left, bottom, right }
+    this.range = { pageLeft, pageTop, pageRight, pageBottom }
 
     // XXX: 候補をもう少し小さくできないか
     const candidateAnchorNodes = document.querySelectorAll('a')
@@ -77,10 +107,10 @@ export default class AnchorsInArea {
         text: anchorNode.innerText.trim(),
         url: anchorNode.href || '',
         position: {
-          top: rect.top + window.scrollY,
-          left: rect.left + window.scrollX,
-          bottom: rect.bottom + window.scrollY,
-          right: rect.right + window.scrollX,
+          pageLeft: rect.left + window.scrollX,
+          pageTop: rect.top + window.scrollY,
+          pageRight: rect.right + window.scrollX,
+          pageBottom: rect.bottom + window.scrollY,
           width: rect.right - rect.left,
           height: rect.bottom - rect.top
         }
