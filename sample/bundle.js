@@ -98,17 +98,23 @@ var AnchorsInArea = function () {
           left = _ref2.left,
           bottom = _ref2.bottom,
           right = _ref2.right,
+          pageTop = _ref2.pageTop,
+          pageLeft = _ref2.pageLeft,
+          pageBottom = _ref2.pageBottom,
+          pageRight = _ref2.pageRight,
           width = _ref2.width,
           height = _ref2.height;
 
+      top = top === undefined ? pageTop : top + window.scrollY;
+      left = left === undefined ? pageLeft : left + window.scrollX;
+      bottom = bottom === undefined ? pageBottom : bottom + window.scrollY;
+      right = right === undefined ? pageRight : right + window.scrollX;
+
       if (height) bottom = top + height;
       if (width) right = left + width;
+
       if (top === undefined || left === undefined || bottom === undefined || right === undefined) return [];
       this.initialize();
-      top += window.scrollY;
-      bottom += window.scrollY;
-      left += window.scrollX;
-      right += window.scrollX;
       this.range = { top: top, left: left, bottom: bottom, right: right };
 
       var candidateAnchorNodes = document.querySelectorAll('a');

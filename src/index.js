@@ -4,11 +4,10 @@ export default class AnchorsInArea {
   constructor (node=window.document) {
     this.root = node
     this.options = {
+      detail: false,
       excludeInvisibles: true,
       onlyInTopLayer: true,
-      onlyHttpUrl: true,
-      detail: false,
-      maxDepth: 20
+      onlyHttpUrl: true
     }
     this.initialize()
   }
@@ -18,22 +17,25 @@ export default class AnchorsInArea {
     this.anchors = []
   }
 
-  _isInvolvedIn ({ top, left, bottom, right }) {
-    if (!top || !left || !bottom || !right) return false
-    var X = this.range.left
-    var Y = this.range.top
-    var Xw = this.range.right || this.range.left + this.range.width
-    var Yh = this.range.bottom || this.range.top + this.range.height
+  _isInvolvedIn ({ page }) {
+    const { left, top, right, bottom } = page
+    const range = this.range
+    if (!left || !top || !right || !bottom) return false
+    const X = range.page.left
+    const Y = range.page.top
+    const Xw = range.page.right || (range.page.left + range.width)
+    const Yh = range.page.bottom || (range.page.top + range.height)
     if (X <= left && right <= Xw && Y <= top && bottom <= Yh) return true
     return false
   }
 
   _isTheTopLayer (anchor, anchorNode) {
+    const { left, top, right, bottom } = anchor.position.page
     const points = [
-      [anchor.position.left + 1, anchor.position.top + 1],
-      [anchor.position.right - 1, anchor.position.top + 1],
-      [anchor.position.right - 1, anchor.position.bottom - 1],
-      [anchor.position.left + 1, anchor.position.bottom - 1]
+      [left + 1, top + 1],
+      [right - 1, top + 1],
+      [right - 1, bottom - 1],
+      [left + 1, bottom - 1]
     ]
 
     for (let point of points) {
@@ -45,17 +47,54 @@ export default class AnchorsInArea {
     return false
   }
 
-  find ({ top, left, bottom, right, width, height }) {
-    if (height) bottom = top + height
-    if (width) right = left + width
-    if (top === undefined || left === undefined
-      || bottom === undefined || right === undefined) return []
+  // page: scrollX, scrollYが加算された値
+  getStandardRange ({ top, left, bottom, right, page, width, height }) {
+    // scroll量も加味された、ページの左上を原点とした座標系に変換する
+    const _page = {}
+    _page.top = (top === undefined) ? page.top : (top + window.scrollY)
+    _page.left = (left === undefined) ? page.left : (left + window.scrollX)
+    _page.bottom = (bottom === undefined) ? page.bottom : (bottom + window.scrollY)
+    _page.right = (right === undefined) ? page.right : (right + window.scrollX)
+
+    if (height) {
+      _page.bottom = _page.top + height
+    } else {
+      height = _page.bottom - _page.top
+    }
+
+    if (width) {
+      _page.right = _page.left + width
+    } else {
+      width = _page.right - _page.left
+    }
+    return { page: _page, width, height }
+  }
+
+  // width, heightに対する相対的な値(%)を返す
+  findRelative (range) {
+    const anchors = this.find(range)
+    const { page, width, height } = this.getStandardRange(range)
+    for (const anchor of anchors) {
+      anchor.position = {
+        page: {
+          left: +(100 * (anchor.position.page.left - page.left) / width).toFixed(2),
+          top: +(100 * (anchor.position.page.top - page.top) / height).toFixed(2)
+        },
+        width: +(100 * anchor.position.width / width).toFixed(2),
+        height: +(100 * anchor.position.height / height).toFixed(2)
+      }
+    }
+    return anchors
+  }
+
+  // ページの左上を原点として、scroll量も加味した値(px)を返す
+  find (range) {
+    const { page, width, height } = this.getStandardRange(range)
+
+    if (page.left === undefined || page.top === undefined
+      || page.right === undefined || page.bottom === undefined) return []
     this.initialize()
-    top += window.scrollY
-    bottom += window.scrollY
-    left += window.scrollX
-    right += window.scrollX
-    this.range = { top, left, bottom, right }
+    this.range = { page }
 
     // XXX: 候補をもう少し小さくできないか
     const candidateAnchorNodes = document.querySelectorAll('a')
@@ -72,10 +111,16 @@ export default class AnchorsInArea {
         text: anchorNode.innerText.trim(),
         url: anchorNode.href || '',
         position: {
-          top: rect.top + window.scrollY,
-          left: rect.left + window.scrollX,
-          bottom: rect.bottom + window.scrollY,
-          right: rect.right + window.scrollX,
+          left: rect.left,
+          top: rect.top,
+          right: rect.right,
+          bottom: rect.bottom,
+          page: {
+            left: rect.left + window.scrollX,
+            top: rect.top + window.scrollY,
+            right: rect.right + window.scrollX,
+            bottom: rect.bottom + window.scrollY
+          },
           width: rect.right - rect.left,
           height: rect.bottom - rect.top
         }
