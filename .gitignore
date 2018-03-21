@@ -90,4 +90,4 @@ typings/
 # dotenv environment variables file
 .env
 
-./sample/bundle.js
+sample/bundle.js

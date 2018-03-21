@@ -49,7 +49,7 @@ pre {
 }
 
 #wrapper {
-  position: fixed;
+  position: absolute;
   background-color: rgba(0,0,0,0.05);
   border: 1px solid #ccc;
   cursor: pointer;
