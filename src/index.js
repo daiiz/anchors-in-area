@@ -100,8 +100,8 @@ export default class AnchorsInArea {
     const candidateAnchorNodes = document.querySelectorAll(tagName)
 
     for (let anchorNode of candidateAnchorNodes) {
-      const href = anchorNode.href
-      if (this.options.onlyHttpUrl && !href.startsWith('http')) continue
+      const href = anchorNode.href || ''
+      if (tagName === 'a' && this.options.onlyHttpUrl && !href.startsWith('http')) continue
       const rect = anchorNode.getBoundingClientRect()
       if (this.options.excludeInvisibles &&
         rect.top === 0 && rect.bottom === 0 && rect.left === 0 && rect.right === 0) {
