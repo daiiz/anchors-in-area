@@ -71,8 +71,8 @@ export default class AnchorsInArea {
   }
 
   // width, heightに対する相対的な値(%)を返す
-  findRelative (range) {
-    const anchors = this.find(range)
+  findRelative (range, tagName='a') {
+    const anchors = this.find(range, tagName)
     const { page, width, height } = this.getStandardRange(range)
     for (const anchor of anchors) {
       anchor.position = {
@@ -88,7 +88,7 @@ export default class AnchorsInArea {
   }
 
   // ページの左上を原点として、scroll量も加味した値(px)を返す
-  find (range) {
+  find (range, tagName='a') {
     const { page, width, height } = this.getStandardRange(range)
 
     if (page.left === undefined || page.top === undefined
@@ -97,7 +97,7 @@ export default class AnchorsInArea {
     this.range = { page }
 
     // XXX: 候補をもう少し小さくできないか
-    const candidateAnchorNodes = document.querySelectorAll('a')
+    const candidateAnchorNodes = document.querySelectorAll(tagName)
 
     for (let anchorNode of candidateAnchorNodes) {
       const href = anchorNode.href
