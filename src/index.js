@@ -152,7 +152,8 @@ export default class AnchorsInArea {
     let sum = 0
     for (const attr of attrs) {
       const px = $(elem).css(attr)
-      sum += +px.split('px')[0] || 0
+      console.log("$##", attr, px)
+      sum += (+px.split('px')[0] || 0)
     }
     return sum
   }
