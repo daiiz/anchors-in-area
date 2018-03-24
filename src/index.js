@@ -108,10 +108,15 @@ export default class AnchorsInArea {
         continue
       }
 
-      const rectLeft = rect.left + this.px(anchorNode, 'padding-left')
-      const rectRight = rect.right - this.px(anchorNode, 'padding-right')
-      const rectTop = rect.top + this.px(anchorNode, 'padding-top')
-      const rectBottom = rect.bottom - this.px(anchorNode, 'padding-bottom')
+      // imgの採寸に影響するCSS attrsを考慮する
+      const rectLeft = rect.left + this.sumPx(anchorNode,
+        ['padding-left', 'border-left-width'])
+      const rectRight = rect.right - this.sumPx(anchorNode,
+        ['padding-right', 'border-right-width'])
+      const rectTop = rect.top + this.sumPx(anchorNode,
+        ['padding-top', 'border-top-width'])
+      const rectBottom = rect.bottom - this.sumPx(anchorNode,
+        ['padding-bottom', 'border-bottom-width'])
 
       const anchor = {
         text: anchorNode.innerText.trim(),
@@ -143,8 +148,12 @@ export default class AnchorsInArea {
     return this.anchors
   }
 
-  px (elem, attr) {
-    const px = $(elem).css(attr)
-    return +px.split('px')[0] || 0
+  sumPx (elem, attrs) {
+    let sum = 0
+    for (const attr of attrs) {
+      const px = $(elem).css(attr)
+      sum += +px.split('px')[0] || 0
+    }
+    return sum
   }
 }
