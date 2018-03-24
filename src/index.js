@@ -107,8 +107,12 @@ export default class AnchorsInArea {
         rect.top === 0 && rect.bottom === 0 && rect.left === 0 && rect.right === 0) {
         continue
       }
-      const paddingX = this.px(anchorNode, 'padding-left') + this.px(anchorNode, 'padding-right')
-      const paddingY = this.px(anchorNode, 'padding-top') + this.px(anchorNode, 'padding-bottom')
+
+      rect.left += this.px(anchorNode, 'padding-left')
+      rect.right -= this.px(anchorNode, 'padding-right')
+      rect.top += this.px(anchorNode, 'padding-top')
+      rect.bottom -= this.px(anchorNode, 'padding-bottom')
+
       const anchor = {
         text: anchorNode.innerText.trim(),
         url: link || '',
@@ -123,8 +127,8 @@ export default class AnchorsInArea {
             right: rect.right + window.scrollX,
             bottom: rect.bottom + window.scrollY
           },
-          width: (rect.right - rect.left) - paddingX,
-          height: (rect.bottom - rect.top) - paddingY
+          width: rect.right - rect.left,
+          height: rect.bottom - rect.top
         }
       }
       if (this.options.detail) {
