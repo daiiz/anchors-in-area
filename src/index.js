@@ -108,27 +108,27 @@ export default class AnchorsInArea {
         continue
       }
 
-      rect.left += this.px(anchorNode, 'padding-left')
-      rect.right -= this.px(anchorNode, 'padding-right')
-      rect.top += this.px(anchorNode, 'padding-top')
-      rect.bottom -= this.px(anchorNode, 'padding-bottom')
+      const rectLeft = rect.left + this.px(anchorNode, 'padding-left')
+      const rectRight = rect.right - this.px(anchorNode, 'padding-right')
+      const rectTop = rect.top + this.px(anchorNode, 'padding-top')
+      const rectBottom = rect.bottom - this.px(anchorNode, 'padding-bottom')
 
       const anchor = {
         text: anchorNode.innerText.trim(),
         url: link || '',
         position: {
-          left: rect.left,
-          top: rect.top,
-          right: rect.right,
-          bottom: rect.bottom,
+          left: rectLeft,
+          top: rectTop,
+          right: rectRight,
+          bottom: rectBottom,
           page: {
-            left: rect.left + window.scrollX,
-            top: rect.top + window.scrollY,
-            right: rect.right + window.scrollX,
-            bottom: rect.bottom + window.scrollY
+            left: rectLeft + window.scrollX,
+            top: rectTop + window.scrollY,
+            right: rectRight + window.scrollX,
+            bottom: rectBottom + window.scrollY
           },
-          width: rect.right - rect.left,
-          height: rect.bottom - rect.top
+          width: rectRight - rectLeft,
+          height: rectBottom - rectTop
         }
       }
       if (this.options.detail) {
