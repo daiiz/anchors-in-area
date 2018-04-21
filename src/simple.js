@@ -2,7 +2,9 @@ export function getAnchors (rangeStr) {
   const range = JSON.parse(rangeStr)
   const anchors = []
   const options = {
-    onlyHttpUrl: true
+    onlyHttpUrl: true,
+    excludeInvisibles: true,
+    onlyInTopLayer: true
   }
 
   const isInvolvedIn = ({ page, range })=> {
@@ -14,6 +16,10 @@ export function getAnchors (rangeStr) {
     const Yh = range.page.bottom || (range.page.top + range.height)
     if (X <= left && right <= Xw && Y <= top && bottom <= Yh) return true
     return false
+  }
+
+  const isTheTopLayer = (anchor, anchorNode) => {
+    return true
   }
 
   const candidateAnchorNodes = document.querySelectorAll('a')
@@ -44,6 +50,7 @@ export function getAnchors (rangeStr) {
       }
     }
     if (!isInvolvedIn({ page: anchor.position.page, range })) continue
+    if (options.onlyInTopLayer && !isTheTopLayer(anchor, anchorNode)) continue
     anchors.push(anchor)
   }
 
