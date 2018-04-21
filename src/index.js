@@ -71,8 +71,8 @@ export default class AnchorsInArea {
   }
 
   // width, heightに対する相対的な値(%)を返す
-  findRelative (range) {
-    const anchors = this.find(range)
+  findRelative (range, tagName='a') {
+    const anchors = this.find(range, tagName)
     const { page, width, height } = this.getStandardRange(range)
     for (const anchor of anchors) {
       anchor.position = {
@@ -88,7 +88,7 @@ export default class AnchorsInArea {
   }
 
   // ページの左上を原点として、scroll量も加味した値(px)を返す
-  find (range) {
+  find (range, tagName='a') {
     const { page, width, height } = this.getStandardRange(range)
 
     if (page.left === undefined || page.top === undefined
@@ -97,32 +97,43 @@ export default class AnchorsInArea {
     this.range = { page }
 
     // XXX: 候補をもう少し小さくできないか
-    const candidateAnchorNodes = document.querySelectorAll('a')
+    const candidateAnchorNodes = document.querySelectorAll(tagName)
 
     for (let anchorNode of candidateAnchorNodes) {
-      const href = anchorNode.href
-      if (this.options.onlyHttpUrl && !href.startsWith('http')) continue
+      const link = anchorNode.href || anchorNode.src
+      if (link && this.options.onlyHttpUrl && !link.startsWith('http')) continue
       const rect = anchorNode.getBoundingClientRect()
       if (this.options.excludeInvisibles &&
         rect.top === 0 && rect.bottom === 0 && rect.left === 0 && rect.right === 0) {
         continue
       }
+
+      // imgの採寸に影響するCSS attrsを考慮する
+      const rectLeft = rect.left + this.sumPx(anchorNode,
+        ['padding-left', 'border-left-width'])
+      const rectRight = rect.right - this.sumPx(anchorNode,
+        ['padding-right', 'border-right-width'])
+      const rectTop = rect.top + this.sumPx(anchorNode,
+        ['padding-top', 'border-top-width'])
+      const rectBottom = rect.bottom - this.sumPx(anchorNode,
+        ['padding-bottom', 'border-bottom-width'])
+
       const anchor = {
         text: anchorNode.innerText.trim(),
-        url: anchorNode.href || '',
+        url: link || '',
         position: {
-          left: rect.left,
-          top: rect.top,
-          right: rect.right,
-          bottom: rect.bottom,
+          left: rectLeft,
+          top: rectTop,
+          right: rectRight,
+          bottom: rectBottom,
           page: {
-            left: rect.left + window.scrollX,
-            top: rect.top + window.scrollY,
-            right: rect.right + window.scrollX,
-            bottom: rect.bottom + window.scrollY
+            left: rectLeft + window.scrollX,
+            top: rectTop + window.scrollY,
+            right: rectRight + window.scrollX,
+            bottom: rectBottom + window.scrollY
           },
-          width: rect.right - rect.left,
-          height: rect.bottom - rect.top
+          width: rectRight - rectLeft,
+          height: rectBottom - rectTop
         }
       }
       if (this.options.detail) {
@@ -135,5 +146,14 @@ export default class AnchorsInArea {
     }
 
     return this.anchors
+  }
+
+  sumPx (elem, attrs) {
+    let sum = 0
+    for (const attr of attrs) {
+      const px = $(elem).css(attr)
+      sum += (+px.split('px')[0] || 0)
+    }
+    return sum
   }
 }
