@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import {getAnchors} from './simple'
 
 export default class AnchorsInArea {
   constructor (node=window.document) {
@@ -10,6 +11,10 @@ export default class AnchorsInArea {
       onlyHttpUrl: true
     }
     this.initialize()
+  }
+
+  static getAnchors (rangeStr) {
+    return getAnchors(rangeStr)
   }
 
   initialize () {
