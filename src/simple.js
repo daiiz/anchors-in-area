@@ -7,6 +7,15 @@ export function getAnchors (rangeStr) {
     onlyInTopLayer: true
   }
 
+  const find = (parent, element) => {
+    const tagName = element.tagName.toLowerCase()
+    const elements = parent.querySelectorAll(tagName)
+    for (const elem of elements) {
+      if (elem === element) return true
+    }
+    return false
+  }
+
   const isInvolvedIn = ({ page, range })=> {
     const { left, top, right, bottom } = page
     if (!left || !top || !right || !bottom) return false
@@ -19,7 +28,22 @@ export function getAnchors (rangeStr) {
   }
 
   const isTheTopLayer = (anchor, anchorNode) => {
-    return true
+    const { left, top, right, bottom } = anchor.position.page
+    const points = [
+      [left + 1, top + 1],
+      [right - 1, top + 1],
+      [right - 1, bottom - 1],
+      [left + 1, bottom - 1]
+    ]
+    const pageXOffset = 0
+    const pageYOffset = 0
+    for (let point of points) {
+      const element = document.elementFromPoint(
+        point[0] - pageXOffset, point[1] - pageYOffset)
+      if (element === anchorNode ||
+        find(element, anchorNode) || find(anchorNode, element)) return true
+    }
+    return false
   }
 
   const candidateAnchorNodes = document.querySelectorAll('a')
